@@ -39,9 +39,8 @@ Pedidos entregados, por pedido:
 ## Estructura del repositorio
 ```
 ├── 01_sql/          Scripts de MySQL (carga de datos, vistas y KPIs)
-├── 02_python/       Notebooks de análisis y generador del reporte PDF
-├── 03_excel/        Excel de apoyo (validación y tablas dinámicas)
-├── 04_powerbi/      Dashboard (.pbix) y exportación en PDF
+├── 02_python/       Cuaderno de Colab que genera el reporte PDF
+├── 04_powerbi/      Dashboard (.pbix)
 ├── 05_reporte/      Reporte ejecutivo para gerencia (PDF)
 └── imagenes/        Capturas del dashboard
 ```
@@ -55,8 +54,11 @@ Pedidos entregados, por pedido:
 ## Cómo reproducirlo
 1. Descarga el dataset en Kaggle: *Brazilian E-Commerce Public Dataset by Olist* (los CSV no se incluyen en este repositorio).
 2. Ejecuta los scripts de `01_sql/` en MySQL para crear la base de datos y las vistas.
-3. Abre los notebooks de `02_python/` en Google Colab para el análisis y la segmentación RFM.
-4. Abre `04_powerbi/Olist_dashboard.pbix` en Power BI Desktop. Para generar el PDF ejecuta `02_python/generar_reporte_olist_v2.py`.
+3. Abre el cuaderno de `02_python/` en Google Colab para generar el reporte PDF.
+4. Abre `04_powerbi/Olist_dashboard.pbix` en Power BI Desktop para explorar el dashboard.
+5. Revisa el [Excel de apoyo en Google Drive](https://docs.google.com/spreadsheets/d/1TVpOeDwtuy0IPPUyZ5gaXtbBlCnHl4cI/edit?usp=sharing), que valida las cifras clave del dashboard y muestra las tendencias mensuales y la distribución de reseñas.
+
+> **Nota:** el archivo fue creado en Microsoft Excel (tablas dinámicas y gráficos dinámicos). Al abrirlo en Google Sheets, los filtros, las tablas dinámicas y los gráficos pueden verse distintos o incompletos. Para visualizarlo correctamente, descárgalo como archivo `.xlsx` (en Google Sheets: **Archivo > Descargar > Microsoft Excel (.xlsx)**) y ábrelo en Excel.
 
 ## Notas metodológicas
 - Los indicadores consideran solo pedidos entregados. La satisfacción es el promedio por pedido (4,16); por ítem es 4,08 y sobre todas las reseñas es 4,09.
@@ -68,4 +70,4 @@ Pedidos entregados, por pedido:
 Olist Brazilian E-Commerce Public Dataset (Kaggle). Revisa la licencia del dataset en Kaggle antes de redistribuir los datos.
 
 ## Autor
-Hans Velasquez Leres · [www.linkedin.com/in/hans-navor-velásquez-leres-425b452a8  /  hansnavor@gmail.com]
+Hans Velasquez Leres · [LinkedIn](https://www.linkedin.com/in/hans-navor-vel%C3%A1squez-leres-425b452a8) · hansnavor@gmail.com
