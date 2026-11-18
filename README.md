@@ -27,7 +27,7 @@ Entender qué impulsa las ventas, cómo afectan los retrasos de entrega a la sat
 ## Herramientas
 | Herramienta | Uso |
 |---|---|
-| MySQL | Carga de datos, vistas (`v_reviews_pedido`, `v_ventas`) y KPIs |
+| MySQL | Carga de datos, vistas (v_ventas, v_pedidos, retraso_pedidos, rfm_clientes) y KPIs por pedido. |
 | Python (pandas, matplotlib, reportlab) | Perfilado de datos, análisis retraso vs. satisfacción, segmentación RFM y generación del reporte PDF |
 | Power BI (DAX) | Modelo de datos, medidas y dashboard de 4 páginas |
 | Excel (tablas dinámicas) | Validación de cifras y tablas dinámicas de apoyo |
