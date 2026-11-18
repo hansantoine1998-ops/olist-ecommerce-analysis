@@ -90,4 +90,4 @@ Pedidos entregados, calculados por pedido:
 Olist Brazilian E-Commerce Public Dataset (Kaggle). Revisa la licencia del dataset en Kaggle antes de redistribuir los datos originales. Esta carpeta `03_datos_procesados/` contiene solo tablas derivadas del análisis.
 
 ## Autor
-Hans Velásquez Leres · [LinkedIn](TU_LINK_DE_LINKEDIN) · hansnavor@gmail.com
+Hans Velásquez Leres · www.linkedin.com/in/hans-navor-velásquez-leres-425b452a8 · hansnavor@gmail.com
