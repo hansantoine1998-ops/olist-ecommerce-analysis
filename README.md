@@ -81,7 +81,7 @@ El Excel de apoyo se descarga desde la sección [Releases](https://github.com/ha
 2. **MySQL:** ejecuta los scripts de `01_sql/` (primero `olist_mysql_setup.sql`, ajustando la ruta de tus CSV, y luego `olist_vistas_kpis.sql`).
 3. **Python:** sube los CSV originales a una carpeta de Google Drive, abre el cuaderno `Analisis_Olist_Colab.ipynb` (carpeta `02_python/`) en Colab y ejecuta todo. El cuaderno valida los KPIs y genera los 4 CSV de `06_datos_procesados/`.
 4. **Power BI:** abre el archivo `.pbix` de la carpeta `04_powerbi/`. Si necesitas actualizar los datos, en *Transformar datos → Configuración de origen de datos* apunta cada tabla a los CSV de `06_datos_procesados/`.
-5. **Reporte PDF:** abre el cuaderno `Reporte_Olist_Colab_final.ipynb` (carpeta `02_python/`) en Colab y ejecuta todo para generar el PDF.
+5. **Reporte PDF:** abre el cuaderno `Reporte_Olist_Colab_ejecutivo.ipynb` (carpeta `02_python/`) en Colab y ejecuta todo para generar el PDF.
 6. **Excel:** descarga el archivo de apoyo desde la sección [Releases](https://github.com/hansantoine1998-ops/olist-ecommerce-analysis/releases/tag/v1.0).
 
 ## Notas metodológicas
