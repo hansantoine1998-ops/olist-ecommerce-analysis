@@ -33,7 +33,7 @@ Entender qué impulsa las ventas, cómo afectan los retrasos de entrega a la sat
 | Excel (tablas dinámicas) | Validación de cifras y tablas dinámicas de apoyo |
 
 ## Indicadores principales
-Pedidos entregados, calculados por pedido:
+Pedidos entregados, calculados por pedido. Los valores monetarios están en reales brasileños (R$); el dashboard y el reporte los muestran con el símbolo «$».
 
 | KPI | Valor |
 |---|---|
@@ -58,6 +58,8 @@ Pedidos entregados, calculados por pedido:
 2. **Prometer plazos realistas.** Adelantarse casi no mejora la nota, pero retrasarse 4 días o más la hunde. Conviene agregar margen al plazo estimado en las zonas con más retrasos antes que acelerar entregas ya rápidas.
 3. **Reactivar a los clientes de alto valor en riesgo.** Una campaña dirigida a los 13.784 clientes inactivos (cerca de $3,8 M históricos) tiene más potencial que captar clientes de bajo valor.
 4. **Fomentar la recompra.** Con solo 3 % de recompra, programas de fidelización o cupones post-compra son una oportunidad.
+
+> Estas recomendaciones son hipótesis derivadas de los datos. Antes de ejecutarlas habría que validarlas con costos, capacidad logística y pruebas piloto.
 
 ## Estructura del repositorio
 ```
@@ -89,6 +91,11 @@ El Excel de apoyo se descarga desde la sección [Releases](https://github.com/ha
 - El Excel de apoyo excluye sep-dic 2016 en sus gráficos mensuales (267 pedidos y $40.471); los totales completos coinciden con el dashboard.
 - **RFM:** recencia y monto en quintiles; frecuencia 1 pedido = 1, 2 pedidos = 3, 3 o más = 5. Se calculó sobre todo el período y depende de que los datos terminan en agosto de 2018.
 - Si se eliminan o se agregan datos, los resultados cambian y el reporte debe actualizarse.
+
+## Alcance y limitaciones
+- **Moneda:** los valores de Olist están en reales brasileños (R$).
+- **Asociación, no causalidad:** que los retrasos se asocien a notas más bajas es un hallazgo sólido, pero no prueba que el retraso sea la causa.
+- **Datos históricos:** el dataset es público y cubre 2016–2018. No corresponde a una empresa real hoy, por lo que el proyecto demuestra el método de análisis y no entrega decisiones listas para ejecutar.
 
 ## Fuente de datos
 Olist Brazilian E-Commerce Public Dataset (Kaggle). Revisa la licencia del dataset en Kaggle antes de redistribuir los datos originales. Esta carpeta `06_datos_procesados/` contiene solo tablas derivadas del análisis.
