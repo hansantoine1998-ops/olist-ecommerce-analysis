@@ -101,4 +101,4 @@ El Excel de apoyo se descarga desde la sección [Releases](https://github.com/ha
 Olist Brazilian E-Commerce Public Dataset (Kaggle). Revisa la licencia del dataset en Kaggle antes de redistribuir los datos originales. Esta carpeta `06_datos_procesados/` contiene solo tablas derivadas del análisis.
 
 ## Autor
-Hans Velásquez Leres · www.linkedin.com/in/hans-navor-velásquez-leres-425b452a8 · hansnavor@gmail.com
+Hans Velásquez Leres · [LinkedIn](https://www.linkedin.com/in/hans-navor-velásquez-leres-425b452a8) · hansnavor@gmail.com
