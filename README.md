@@ -89,7 +89,7 @@ El Excel de apoyo se descarga desde la sección [Releases](https://github.com/ha
 ## Notas metodológicas
 - Los indicadores consideran solo pedidos entregados. La satisfacción es el promedio por pedido (4,16); por ítem es 4,08 y sobre todas las reseñas es 4,09.
 - El Excel de apoyo excluye sep-dic 2016 en sus gráficos mensuales (267 pedidos y $40.471); los totales completos coinciden con el dashboard.
-- **RFM:** recencia y monto en quintiles; frecuencia 1 pedido = 1, 2 pedidos = 3, 3 o más = 5. Se calculó sobre todo el período y depende de que los datos terminan en agosto de 2018.
+- **RFM:** recencia y monto en quintiles; frecuencia 1 pedido = 1, 2 pedidos = 3, 3 o más = 5. Se calculó sobre todo el período y depende de que los datos terminen en agosto de 2018.
 - Si se eliminan o se agregan datos, los resultados cambian y el reporte debe actualizarse.
 
 ## Alcance y limitaciones
