@@ -1,0 +1,483 @@
+<title>Panel Olist</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Concepto: tablero de análisis sobrio, neutros fríos, azul para magnitud y rojo solo para retraso/alerta. */
+:root{
+  --bg:#f3f4f6; --surface:#ffffff; --ink:#14171c; --ink2:#454b55; --muted:#6f7681; --line:#e1e4e9;
+  --blue:#2a78d6; --blue-deep:#184f95; --blue-soft:#cde2fb; --red:#d03b3b; --red-soft:#f6d9d9;
+  --good:#0a8a0a; --chip:#eaf0f8; --shadow:0 1px 2px rgba(20,23,28,.06);
+  --font-body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --font-head:'Space Grotesk','Inter',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101113; --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#8f8f88; --line:#2d2e30;
+    --blue:#3987e5; --blue-deep:#6da7ec; --blue-soft:#184f95; --red:#e66767; --red-soft:#4a2424;
+    --good:#0ca30c; --chip:#22262c; --shadow:none; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101113; --surface:#1a1a19; --ink:#f0efec; --ink2:#c3c2b7; --muted:#8f8f88; --line:#2d2e30;
+  --blue:#3987e5; --blue-deep:#6da7ec; --blue-soft:#184f95; --red:#e66767; --red-soft:#4a2424;
+  --good:#0ca30c; --chip:#22262c; --shadow:none; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:14px;line-height:1.45;
+  padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+.wrap{max-width:1180px;margin:0 auto}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding:14px 0 10px;border-bottom:1px solid var(--line)}
+.brand{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px}
+.brand h1{font-family:var(--font-head);font-size:22px;margin:0;font-weight:700;letter-spacing:-.01em}
+.brand p{margin:0;color:var(--muted);font-size:13px}
+nav.tabs{display:flex;gap:4px;margin-top:10px;overflow-x:auto;scrollbar-width:thin}
+nav.tabs button{font:inherit;font-weight:500;color:var(--ink2);background:transparent;border:1px solid transparent;border-radius:8px;padding:7px 14px;cursor:pointer;white-space:nowrap}
+nav.tabs button:hover{background:var(--chip)}
+nav.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+nav.tabs button:focus-visible,.chips button:focus-visible,select:focus-visible,.reset:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.filters{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:flex-end;margin-top:12px}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0}
+.f label,.f .lab{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.chips{display:flex;gap:0;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.chips button{font:inherit;font-size:13px;border:0;background:transparent;color:var(--ink2);padding:6px 12px;cursor:pointer;border-right:1px solid var(--line)}
+.chips button:last-child{border-right:0}
+.chips button[aria-checked="true"]{background:var(--blue);color:#fff;font-weight:600}
+select{font:inherit;font-size:13px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-width:150px;max-width:100%}
+.reset{font:inherit;font-size:12px;color:var(--ink2);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+.reset:hover{background:var(--chip)}
+main{padding-top:18px}
+.page-sub{margin:0 0 14px;color:var(--muted);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);min-width:0}
+.kpi .l{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+.kpi .v{font-family:var(--font-head);font-size:22px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi .v.alert{color:var(--red)}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:2px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(12,1fr)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);min-width:0}
+.card h2{font-family:var(--font-head);font-size:15px;margin:0 0 2px;font-weight:600}
+.card .sub{font-size:12px;color:var(--muted);margin:0 0 10px}
+.c4{grid-column:span 4}.c5{grid-column:span 5}.c6{grid-column:span 6}.c7{grid-column:span 7}.c8{grid-column:span 8}.c12{grid-column:span 12}
+@media (max-width:900px){.c4,.c5,.c6,.c7,.c8{grid-column:span 12}}
+.chart{position:relative;height:270px}
+.chart.tall{height:320px}
+.insights{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.insights li{padding-left:14px;position:relative;color:var(--ink2)}
+.insights li::before{content:"";position:absolute;left:0;top:.6em;width:6px;height:6px;border-radius:2px;background:var(--blue)}
+.insights b{color:var(--ink);font-weight:600}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:13px}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:right;font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+tr.hl td{background:var(--chip);font-weight:600}
+tr.tot td{font-weight:700;border-top:2px solid var(--line)}
+td.name{white-space:normal;min-width:130px}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+details{margin-top:12px}
+summary{cursor:pointer;color:var(--ink2);font-size:13px;font-weight:500}
+.pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700;letter-spacing:.02em}
+.pill.ok{background:color-mix(in srgb,var(--good) 18%,transparent);color:var(--good)}
+.pill.bad{background:var(--red-soft);color:var(--red)}
+.summary-bar{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;margin-bottom:12px}
+.summary-bar .big{font-family:var(--font-head);font-size:28px;font-weight:700}
+.detail{display:flex;flex-wrap:wrap;gap:6px 22px;margin:0 0 12px;padding:10px 12px;background:var(--chip);border-radius:8px}
+.detail div{min-width:0}.detail .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}.detail .v{font-weight:700;font-variant-numeric:tabular-nums}
+.loading{padding:40px 0;color:var(--muted)}
+footer{margin-top:22px;color:var(--muted);font-size:12px}
+</style>
+
+<div class="wrap">
+<header class="top">
+  <div class="brand"><h1>Panel Olist</h1><p>E-commerce Brasil · pedidos entregados · sep. 2016 a ago. 2018 · valores en reales brasileños (R$), mostrados con «$»</p></div>
+  <nav class="tabs" role="tablist" aria-label="Páginas">
+    <button role="tab" data-page="resumen">Resumen</button>
+    <button role="tab" data-page="productos">Productos</button>
+    <button role="tab" data-page="logistica">Logística</button>
+    <button role="tab" data-page="clientes">Clientes (RFM)</button>
+    <button role="tab" data-page="verificacion">Verificación</button>
+  </nav>
+  <div class="filters" id="filters">
+    <div class="f" data-pages="resumen productos logistica"><span class="lab" id="lab-year">Año</span>
+      <div class="chips" role="radiogroup" aria-labelledby="lab-year" id="chips-year"></div></div>
+    <div class="f" data-pages="resumen productos logistica"><label for="sel-estado">Estado</label><select id="sel-estado"></select></div>
+    <div class="f" data-pages="productos"><label for="sel-cat">Categoría</label><select id="sel-cat"></select></div>
+    <div class="f" data-pages="clientes"><label for="sel-seg">Segmento</label><select id="sel-seg"></select></div>
+    <div class="f" data-pages="resumen productos logistica clientes"><span class="lab">&nbsp;</span><button class="reset" id="reset" type="button">Restablecer filtros</button></div>
+  </div>
+</header>
+
+<main id="main">
+  <p class="loading" id="loading">Cargando datos de 96.478 pedidos…</p>
+
+  <section id="p-resumen" hidden>
+    <p class="page-sub" id="sub-resumen"></p>
+    <div class="kpis" id="kpis-resumen"></div>
+    <div class="grid">
+      <div class="card c8"><h2>Ventas mensuales</h2><p class="sub">Ventas en $ (sin flete), pedidos entregados</p><div class="chart"><canvas id="ch-mensual" role="img" aria-label="Línea de ventas mensuales"></canvas></div></div>
+      <div class="card c4"><h2>Principales hallazgos</h2><p class="sub">Se recalculan con los filtros</p><ul class="insights" id="ins-resumen"></ul></div>
+      <div class="card c12"><h2>Top 10 estados por ventas</h2><p class="sub" id="sub-estados">Ventas en $; el filtro de estado resalta una barra</p><div class="chart"><canvas id="ch-estados" role="img" aria-label="Barras de los 10 estados con más ventas"></canvas></div>
+        <details><summary>Ver datos de las ventas mensuales</summary><div class="tw"><table id="tb-mensual"></table></div></details></div>
+    </div>
+  </section>
+
+  <section id="p-productos" hidden>
+    <p class="page-sub" id="sub-productos"></p>
+    <div class="detail" id="cat-detail" hidden></div>
+    <div class="grid">
+      <div class="card c6"><h2>Top 15 categorías por ventas</h2><p class="sub">Un pedido con varias categorías se cuenta en cada una. Satisfacción: promedio por ítem.</p><div class="tw"><table id="tb-cats"></table></div></div>
+      <div class="card c6"><h2>Top 10 categorías por ventas ($)</h2><p class="sub">Barras ordenadas por ventas</p><div class="chart tall"><canvas id="ch-cats" role="img" aria-label="Barras de las 10 categorías con más ventas"></canvas></div></div>
+      <div class="card c12"><h2>Principales hallazgos</h2><ul class="insights" id="ins-productos"></ul></div>
+    </div>
+  </section>
+
+  <section id="p-logistica" hidden>
+    <p class="page-sub" id="sub-logistica"></p>
+    <div class="kpis" id="kpis-logistica"></div>
+    <div class="grid">
+      <div class="card c4"><h2>Satisfacción según días de retraso</h2><p class="sub">Nota promedio (1-5) por tramo respecto de la fecha estimada</p><div class="chart"><canvas id="ch-sat" role="img" aria-label="Satisfacción por tramo de retraso"></canvas></div></div>
+      <div class="card c4"><h2>Pedidos por tramo de entrega</h2><p class="sub">Cantidad de pedidos con reseña y fecha de entrega</p><div class="chart"><canvas id="ch-tramo" role="img" aria-label="Pedidos por tramo de retraso"></canvas></div></div>
+      <div class="card c4"><h2>Dispersión por estado</h2><p class="sub">% de entregas tardías vs. satisfacción; tamaño = pedidos</p><div class="chart"><canvas id="ch-disp" role="img" aria-label="Dispersión por estado"></canvas></div></div>
+      <div class="card c7"><h2>% de entregas tardías: 10 estados con mayor tasa</h2><p class="sub">Estados con al menos 100 pedidos; los 3 primeros en rojo</p><div class="chart tall"><canvas id="ch-tard" role="img" aria-label="Barras de estados con más entregas tardías"></canvas></div></div>
+      <div class="card c5"><h2>Principales hallazgos</h2><ul class="insights" id="ins-logistica"></ul>
+        <details><summary>Ver tabla por tramo</summary><div class="tw"><table id="tb-tramo"></table></div></details></div>
+    </div>
+  </section>
+
+  <section id="p-clientes" hidden>
+    <p class="page-sub" id="sub-clientes"></p>
+    <div class="kpis" id="kpis-clientes"></div>
+    <div class="grid">
+      <div class="card c12"><h2>Segmentos RFM</h2><p class="sub">Recencia en quintiles, frecuencia por número de pedidos y monto en quintiles</p><div class="tw"><table id="tb-seg"></table></div>
+        <p class="note">Segmentación sobre todo el período; no responde a los filtros de año ni de estado. «En riesgo» y «Perdidos» dependen de que los datos terminan en agosto de 2018.</p></div>
+      <div class="card c12"><h2>Principales hallazgos</h2><ul class="insights" id="ins-clientes"></ul></div>
+      <div class="card c6"><h2>Peso en ventas por segmento (%)</h2><div class="chart"><canvas id="ch-segv" role="img" aria-label="Porcentaje de ventas por segmento"></canvas></div></div>
+      <div class="card c6"><h2>Clientes por segmento</h2><div class="chart"><canvas id="ch-segc" role="img" aria-label="Clientes por segmento"></canvas></div></div>
+    </div>
+  </section>
+
+  <section id="p-verificacion" hidden>
+    <p class="page-sub">Cada cifra del dashboard de Power BI, del PDF y del README se recalcula aquí, en vivo, desde los 4 CSV publicados en <b>06_datos_procesados</b> del repositorio. No depende de los filtros.</p>
+    <div class="card" style="margin-bottom:14px"><div class="summary-bar" id="ver-sum"></div>
+      <div class="tw"><table id="tb-ver"></table></div>
+      <p class="note">Criterio: una cifra coincide si, redondeada a los decimales con que se publica, es igual a la oficial. Las cifras «oficiales» son las del README y el reporte PDF.</p></div>
+    <div class="card"><h2>Alcance de esta verificación</h2>
+      <ul class="insights">
+        <li><b>Cubierto aquí:</b> KPIs, hallazgos y tablas (ventas, logística, RFM), recalculados desde <code>v_pedidos</code>, <code>v_ventas</code>, <code>rfm_clientes</code> y <code>retraso_pedidos</code>.</li>
+        <li><b>Verificado aparte:</b> los 7 KPIs del script SQL en MySQL (captura del usuario) y el notebook de Python, que corrió con los CSV originales de Kaggle.</li>
+        <li><b>Limitaciones:</b> los resultados son asociaciones, no causalidad; los datos son históricos (2016-2018) y las recomendaciones son hipótesis a validar con costos y pruebas piloto.</li>
+      </ul></div>
+  </section>
+</main>
+<footer>Fuente: Olist Brazilian E-Commerce Public Dataset (Kaggle). Cálculos por pedido; ventas = precio sin flete. Repositorio: github.com/hansantoine1998-ops/olist-ecommerce-analysis</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(s){return document.querySelector(s)};
+var MESES=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+function mlabel(i){var t=8+i;return MESES[t%12]+' '+(16+Math.floor(t/12))}
+function yearOf(m){return m<4?2016:(m<16?2017:2018)}
+function fmt(n,d){d=d||0;if(!isFinite(n))return '–';var s=Math.abs(n).toFixed(d).split('.');s[0]=s[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.');return (n<0?'-':'')+s.join(',')}
+function money(n){return '$'+fmt(n,0)}
+function money2(n){return '$'+fmt(n,2)}
+function pct(n,d){return fmt(n,d==null?1:d)+' %'}
+function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+var S={page:'resumen',year:0,est:-1,cat:-1,seg:''};
+var D=null, charts={};
+var OFICIAL={ventas:13221498.11,pedidos:96478,ticket:137.04,dias:12.5,tard:8.11,sat:4.16,clientes:93358,repiten:3.0,conresena:95824,sp:38,top3:63,pico:987765,altoC:30,altoV:58,riesgo:13784,riesgoRec:395,
+  tramos:[4.32,4.21,3.77,2.32,1.75,1.71],topcat:1233132};
+
+/* ---------- carga ---------- */
+function parseCSV(text,cols,conv){
+  var lines=text.split('\n'),n=0,i;
+  for(i=1;i<lines.length;i++){if(lines[i])n++}
+  var out={};cols.forEach(function(c){out[c]=new conv[c](n)});
+  var k=0;
+  for(i=1;i<lines.length;i++){var ln=lines[i];if(!ln)continue;var p=ln.split(',');
+    for(var j=0;j<cols.length;j++){out[cols[j]][k]=+p[j]}k++}
+  out.n=n;return out;
+}
+function load(){
+  return Promise.all([fetch('orders.csv').then(function(r){return r.text()}),fetch('cats.csv').then(function(r){return r.text()}),fetch('meta.json').then(function(r){return r.json()})]).then(function(a){
+    var O=parseCSV(a[0],['m','e','v','d','t','r','c','g'],{m:Uint8Array,e:Uint8Array,v:Float32Array,d:Int16Array,t:Int8Array,r:Float32Array,c:Int32Array,g:Uint8Array});
+    var K=parseCSV(a[1],['c','y','e','ventas','items','rs','rn','pedidos'],{c:Uint8Array,y:Uint8Array,e:Uint8Array,ventas:Float64Array,items:Int32Array,rs:Float64Array,rn:Int32Array,pedidos:Int32Array});
+    var nc=0;for(var i=0;i<O.n;i++){if(O.c[i]>nc)nc=O.c[i]}
+    D={O:O,K:K,meta:a[2],nCust:nc+1};
+  });
+}
+
+/* ---------- agregaciones ---------- */
+function agg(year,est){
+  var O=D.O,a={n:0,v:0,dS:0,dN:0,tS:0,tN:0,rS:0,rN:0,cust:0,mv:new Float64Array(24),mn:new Float64Array(24),gn:new Float64Array(7),gr:new Float64Array(7),grn:new Float64Array(7),conresena:0};
+  var seen=new Uint8Array(D.nCust);
+  for(var i=0;i<O.n;i++){
+    var m=O.m[i];
+    if(year&&yearOf(m)!==year)continue;
+    if(est>=0&&O.e[i]!==est)continue;
+    a.n++;a.v+=O.v[i];a.mv[m]+=O.v[i];a.mn[m]++;
+    if(O.d[i]>=0){a.dS+=O.d[i];a.dN++}
+    if(O.t[i]>=0){a.tS+=O.t[i];a.tN++}
+    if(O.r[i]>0){a.rS+=O.r[i];a.rN++}
+    if(!seen[O.c[i]]){seen[O.c[i]]=1;a.cust++}
+    var g=O.g[i];if(g>0){a.gn[g]++;a.conresena++;a.gr[g]+=O.r[i];a.grn[g]++}
+  }
+  return a;
+}
+function byState(year){
+  var O=D.O,nE=D.meta.estados.length,s=[];
+  for(var e=0;e<nE;e++)s.push({e:e,n:0,v:0,tS:0,tN:0,rS:0,rN:0,dS:0,dN:0});
+  for(var i=0;i<O.n;i++){
+    if(year&&yearOf(O.m[i])!==year)continue;
+    var x=s[O.e[i]];x.n++;x.v+=O.v[i];
+    if(O.t[i]>=0){x.tS+=O.t[i];x.tN++}
+    if(O.r[i]>0){x.rS+=O.r[i];x.rN++}
+    if(O.d[i]>=0){x.dS+=O.d[i];x.dN++}
+  }
+  return s;
+}
+function catAgg(year,est){
+  var K=D.K,nC=D.meta.cats.length,c=[];
+  for(var i=0;i<nC;i++)c.push({c:i,v:0,p:0,it:0,rs:0,rn:0});
+  for(var j=0;j<K.n;j++){
+    if(year&&K.y[j]+2016!==year)continue;
+    if(est>=0&&K.e[j]!==est)continue;
+    var x=c[K.c[j]];x.v+=K.ventas[j];x.p+=K.pedidos[j];x.it+=K.items[j];x.rs+=K.rs[j];x.rn+=K.rn[j];
+  }
+  return c.filter(function(x){return x.v>0}).sort(function(a,b){return b.v-a.v});
+}
+function repiten(){
+  var O=D.O,cnt=new Uint8Array(D.nCust);
+  for(var i=0;i<O.n;i++){if(cnt[O.c[i]]<255)cnt[O.c[i]]++}
+  var r=0;for(var j=0;j<cnt.length;j++){if(cnt[j]>=2)r++}
+  return 100*r/D.nCust;
+}
+
+/* ---------- utilidades de gráficos ---------- */
+function setupChartDefaults(){
+  Chart.defaults.font.family=css('--font-body');Chart.defaults.font.size=11;
+  Chart.defaults.color=css('--ink2');Chart.defaults.animation=false;
+}
+function mk(id,cfg){
+  if(charts[id]){charts[id].destroy()}
+  var el=document.getElementById(id);if(!el)return;
+  cfg.options=cfg.options||{};cfg.options.responsive=true;cfg.options.maintainAspectRatio=false;
+  charts[id]=new Chart(el.getContext('2d'),cfg);
+}
+function axes(horizontal,fmtTick,extra){
+  var grid={color:css('--line'),drawTicks:false},ticks={color:css('--muted'),padding:6};
+  var val={grid:grid,border:{display:false},ticks:Object.assign({},ticks,{callback:fmtTick})};
+  var cat={grid:{display:false},border:{color:css('--line')},ticks:Object.assign({},ticks)};
+  if(extra&&extra.valmin!=null)val.min=extra.valmin;if(extra&&extra.valmax!=null)val.max=extra.valmax;if(extra&&extra.step)val.ticks.stepSize=extra.step;
+  return horizontal?{x:val,y:cat}:{x:cat,y:val};
+}
+function tipStyle(){return {backgroundColor:css('--ink'),titleColor:css('--bg'),bodyColor:css('--bg'),padding:9,cornerRadius:6,displayColors:false}}
+function short(n){if(n>=1e6)return '$'+fmt(n/1e6,1)+' mill.';if(n>=1e3)return '$'+fmt(n/1e3,0)+' mil';return '$'+fmt(n,0)}
+function kpi(l,v,s,alert){return '<div class="kpi"><div class="l">'+l+'</div><div class="v'+(alert?' alert':'')+'">'+v+'</div><div class="s">'+(s||'&nbsp;')+'</div></div>'}
+function desc(){
+  var t=S.year?('Año '+S.year):'Todo el período';
+  if(S.est>=0)t+=' · estado '+D.meta.estados[S.est];else t+=' · todos los estados';
+  return t;
+}
+
+/* ---------- páginas ---------- */
+function renderResumen(){
+  var a=agg(S.year,S.est),m=D.meta;
+  $('#sub-resumen').textContent=desc()+'. Pedidos entregados.';
+  $('#kpis-resumen').innerHTML=
+    kpi('Total ventas',money(a.v),'sin flete')+kpi('Total pedidos',fmt(a.n),'entregados')+
+    kpi('Ticket promedio',money2(a.v/a.n),'por pedido')+kpi('Días de entrega',fmt(a.dS/a.dN,2),'promedio desde la compra')+
+    kpi('% tardías',pct(100*a.tS/a.tN,2),'sobre fecha estimada',true)+kpi('Satisfacción',fmt(a.rS/a.rN,2),'nota 1-5, por pedido')+kpi('Clientes',fmt(a.cust),'únicos');
+  var lo=0,hi=23;if(S.year===2016){lo=0;hi=3}else if(S.year===2017){lo=4;hi=15}else if(S.year===2018){lo=16;hi=23}
+  var labels=[],vals=[],i;for(i=lo;i<=hi;i++){labels.push(mlabel(i));vals.push(Math.round(a.mv[i]))}
+  var blue=css('--blue');
+  mk('ch-mensual',{type:'line',data:{labels:labels,datasets:[{data:vals,borderColor:blue,backgroundColor:blue,borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.25}]},
+    options:{plugins:{legend:{display:false},tooltip:Object.assign(tipStyle(),{callbacks:{label:function(c){return money(c.parsed.y)}}})},scales:axes(false,function(v){return short(v)},{valmin:0}),interaction:{mode:'index',intersect:false}}});
+  var tb='<tr><th>Mes</th><th>Ventas</th><th>Pedidos</th></tr>';
+  for(i=lo;i<=hi;i++)tb+='<tr><td>'+mlabel(i)+'</td><td>'+money(a.mv[i])+'</td><td>'+fmt(a.mn[i])+'</td></tr>';
+  $('#tb-mensual').innerHTML=tb;
+  var st=byState(S.year),tot=st.reduce(function(s,x){return s+x.v},0);
+  var top=st.slice().sort(function(x,y){return y.v-x.v}),t10=top.slice(0,10);
+  var sel=S.est;
+  mk('ch-estados',{type:'bar',data:{labels:t10.map(function(x){return m.estados[x.e]}),datasets:[{data:t10.map(function(x){return Math.round(x.v)}),
+      backgroundColor:t10.map(function(x){return (sel>=0&&x.e!==sel)?css('--blue-soft'):blue}),borderRadius:4,barPercentage:.7}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign(tipStyle(),{callbacks:{label:function(c){return money(c.parsed.x)+' · '+pct(100*c.parsed.x/tot,1)+' del total'}}})},scales:axes(true,function(v){return short(v)},{valmin:0})}});
+  var peak=0,pk=lo;for(i=lo;i<=hi;i++){if(a.mv[i]>peak){peak=a.mv[i];pk=i}}
+  var sp=st.filter(function(x){return m.estados[x.e]==='SP'})[0],top3=top.slice(0,3);
+  var ins=[];
+  ins.push('<b>'+m.estados[top[0].e]+'</b> concentra el <b>'+pct(100*top[0].v/tot,0)+'</b> de las ventas; '+top3.map(function(x){return m.estados[x.e]}).join(', ')+' suman el <b>'+pct(100*top3.reduce(function(s,x){return s+x.v},0)/tot,0)+'</b>.');
+  ins.push('Pico de ventas en <b>'+mlabel(pk)+'</b> ('+money(peak)+').');
+  ins.push('Satisfacción de <b>'+fmt(a.rS/a.rN,2)+'</b> sobre 5; baja con retrasos largos (ver Logística).');
+  ins.push('<b>'+pct(100*a.tS/a.tN,2)+'</b> de los pedidos llegó tarde (unos '+fmt(a.tS)+' pedidos).');
+  if(S.est>=0)ins.push('Filtro activo: <b>'+m.estados[S.est]+'</b>. Las cifras de ventas por estado siguen mostrando el ranking nacional.');
+  $('#ins-resumen').innerHTML=ins.map(function(x){return '<li>'+x+'</li>'}).join('');
+}
+
+function heat(v){
+  if(v>=4.15)return 'background:color-mix(in srgb,var(--blue) 22%,transparent)';
+  if(v<3.95)return 'background:color-mix(in srgb,var(--red) 24%,transparent)';
+  if(v<4.05)return 'background:color-mix(in srgb,var(--red) 11%,transparent)';
+  return '';
+}
+function renderProductos(){
+  var m=D.meta,cs=catAgg(S.year,S.est),tot=cs.reduce(function(s,x){return s+x.v},0);
+  $('#sub-productos').textContent=desc()+'. Ventas y satisfacción por categoría (pedidos entregados).';
+  var t15=cs.slice(0,15),sel=S.cat;
+  var tb='<tr><th>Categoría</th><th>Ventas ($)</th><th>Pedidos</th><th>Ticket ($)</th><th>Satisfacción</th></tr>';
+  t15.forEach(function(x){var sat=x.rs/x.rn;tb+='<tr'+(x.c===sel?' class="hl"':'')+'><td class="name">'+esc(m.catES[x.c])+'</td><td>'+fmt(x.v)+'</td><td>'+fmt(x.p)+'</td><td>'+fmt(x.v/x.p,2)+'</td><td style="'+heat(sat)+'">'+fmt(sat,2)+'</td></tr>'});
+  $('#tb-cats').innerHTML=tb;
+  var t10=cs.slice(0,10),blue=css('--blue');
+  mk('ch-cats',{type:'bar',data:{labels:t10.map(function(x){return m.catES[x.c]}),datasets:[{data:t10.map(function(x){return Math.round(x.v)}),
+      backgroundColor:t10.map(function(x){return (sel>=0&&x.c!==sel)?css('--blue-soft'):blue}),borderRadius:4,barPercentage:.7}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign(tipStyle(),{callbacks:{label:function(c){return money(c.parsed.x)+' · '+pct(100*c.parsed.x/tot,1)+' del total'}}})},scales:axes(true,function(v){return short(v)},{valmin:0})}});
+  var d=$('#cat-detail');
+  if(sel>=0){var x=cs.filter(function(y){return y.c===sel})[0];
+    if(x){d.hidden=false;d.innerHTML='<div><div class="l">Categoría</div><div class="v">'+esc(m.catES[sel])+'</div></div><div><div class="l">Ventas</div><div class="v">'+money(x.v)+'</div></div><div><div class="l">Pedidos</div><div class="v">'+fmt(x.p)+'</div></div><div><div class="l">Ticket</div><div class="v">'+money2(x.v/x.p)+'</div></div><div><div class="l">Satisfacción</div><div class="v">'+fmt(x.rs/x.rn,2)+'</div></div><div><div class="l">Participación</div><div class="v">'+pct(100*x.v/tot,1)+'</div></div>'}
+    else{d.hidden=false;d.innerHTML='<div>Sin ventas de esta categoría con los filtros actuales.</div>'}
+  }else d.hidden=true;
+  var s3=cs.slice(0,3).reduce(function(s,x){return s+x.v},0),s10=t10.reduce(function(s,x){return s+x.v},0);
+  var lowSat=t15.slice().sort(function(a,b){return a.rs/a.rn-b.rs/b.rn})[0],hiTk=t15.slice().sort(function(a,b){return b.v/b.p-a.v/a.p})[0],mostP=t15.slice().sort(function(a,b){return b.p-a.p})[0];
+  var ins=[];
+  ins.push('Las 3 primeras categorías suman <b>'+pct(100*s3/tot,0)+'</b> de las ventas y las 10 primeras, <b>'+pct(100*s10/tot,0)+'</b>.');
+  ins.push('<b>'+esc(m.catES[mostP.c])+'</b> lidera en pedidos ('+fmt(mostP.p)+'), con ticket de '+money2(mostP.v/mostP.p)+'.');
+  ins.push('<b>'+esc(m.catES[hiTk.c])+'</b> tiene el ticket más alto entre las 15 principales ('+money2(hiTk.v/hiTk.p)+').');
+  ins.push('Nota más baja entre las 15 principales: <b>'+esc(m.catES[lowSat.c])+'</b> ('+fmt(lowSat.rs/lowSat.rn,2)+').');
+  ins.push('Total de ventas con los filtros actuales: <b>'+money(tot)+'</b>.');
+  $('#ins-productos').innerHTML=ins.map(function(x){return '<li>'+x+'</li>'}).join('');
+}
+
+function renderLogistica(){
+  var a=agg(S.year,S.est),m=D.meta;
+  $('#sub-logistica').textContent=desc()+'. Impacto de los retrasos en la satisfacción.';
+  $('#kpis-logistica').innerHTML=kpi('Pedidos con reseña',fmt(a.conresena),'y fecha de entrega')+kpi('Días de entrega',fmt(a.dS/a.dN,2),'promedio desde la compra')+kpi('% tardías',pct(100*a.tS/a.tN,2),'sobre fecha estimada',true)+kpi('Satisfacción',fmt(a.rS/a.rN,2),'nota 1-5');
+  var g=[1,2,3,4,5,6],sat=g.map(function(i){return a.grn[i]?a.gr[i]/a.grn[i]:0}),cnt=g.map(function(i){return a.gn[i]});
+  var cols=g.map(function(i){return i>=4?css('--red'):css('--blue')});
+  mk('ch-sat',{type:'bar',data:{labels:m.grupos,datasets:[{data:sat.map(function(x){return +x.toFixed(2)}),backgroundColor:cols,borderRadius:4,barPercentage:.75}]},
+    options:{plugins:{legend:{display:false},tooltip:Object.assign(tipStyle(),{callbacks:{label:function(c){return 'Nota '+fmt(c.parsed.y,2)}}})},scales:axes(false,function(v){return fmt(v,0)},{valmin:0,valmax:5,step:1})}});
+  mk('ch-tramo',{type:'bar',data:{labels:m.grupos,datasets:[{data:cnt,backgroundColor:cols,borderRadius:4,barPercentage:.75}]},
+    options:{plugins:{legend:{display:false},tooltip:Object.assign(tipStyle(),{callbacks:{label:function(c){return fmt(c.parsed.y)+' pedidos'}}})},scales:axes(false,function(v){return fmt(v)},{valmin:0})}});
+  var st=byState(S.year).filter(function(x){return x.tN>=100&&x.rN>0});
+  var pts=st.map(function(x){return {x:100*x.tS/x.tN,y:x.rS/x.rN,n:x.n,e:x.e}});
+  var selI=S.est;
+  var labelPlugin={id:'lbl',afterDatasetsDraw:function(ch){
+    var ctx=ch.ctx,meta=ch.getDatasetMeta(0);ctx.save();ctx.font='600 10px '+css('--font-body');ctx.fillStyle=css('--ink2');ctx.textAlign='left';
+    meta.data.forEach(function(el,i){var p=pts[i];if(p.n>=10000||p.x>=14||p.e===selI){ctx.fillText(m.estados[p.e],el.x+(el.options.radius||4)+3,el.y+3)}});ctx.restore()}};
+  mk('ch-disp',{type:'scatter',data:{datasets:[{data:pts,backgroundColor:pts.map(function(p){return p.e===selI?css('--red'):css('--blue')}),borderColor:css('--surface'),borderWidth:1.5,
+      pointRadius:pts.map(function(p){return 3+Math.sqrt(p.n)/14}),pointHoverRadius:pts.map(function(p){return 5+Math.sqrt(p.n)/14})}]},
+    options:{plugins:{legend:{display:false},tooltip:Object.assign(tipStyle(),{callbacks:{title:function(c){return m.estados[c[0].raw.e]},label:function(c){var r=c.raw;return [pct(r.x,1)+' tardías','Nota '+fmt(r.y,2),fmt(r.n)+' pedidos']}}})},
+      scales:{x:Object.assign(axes(false,function(v){return v+' %'}).y,{title:{display:true,text:'% entregas tardías',color:css('--muted')}}),y:Object.assign(axes(false,function(v){return fmt(v,2)}).y,{title:{display:true,text:'Satisfacción',color:css('--muted')}})}},plugins:[labelPlugin]});
+  var tt=st.slice().sort(function(x,y){return y.tS/y.tN-x.tS/x.tN}).slice(0,10);
+  mk('ch-tard',{type:'bar',data:{labels:tt.map(function(x){return m.estados[x.e]}),datasets:[{data:tt.map(function(x){return +(100*x.tS/x.tN).toFixed(2)}),
+      backgroundColor:tt.map(function(x,i){return i<3?css('--red'):css('--blue')}),borderRadius:4,barPercentage:.7}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign(tipStyle(),{callbacks:{label:function(c){return pct(c.parsed.x,2)+' de los pedidos'}}})},scales:axes(true,function(v){return v+' %'},{valmin:0})}});
+  var onTime=a.grn[2]?a.gr[2]/a.grn[2]:0,early=a.grn[1]?a.gr[1]/a.grn[1]:0,l47=a.grn[4]?a.gr[4]/a.grn[4]:0,lw=(a.grn[5]+a.grn[6])?(a.gr[5]+a.gr[6])/(a.grn[5]+a.grn[6]):0;
+  var ins=[];
+  ins.push('La nota baja de <b>'+fmt(onTime,1)+'</b> (a tiempo) a <b>'+fmt(l47,1)+'</b> con 4 a 7 días de retraso y a <b>'+fmt(lw,1)+'</b> con más de una semana.');
+  ins.push('Llegar antes casi no mejora la nota ('+fmt(early,2)+' vs '+fmt(onTime,2)+'). Es una asociación, no prueba causalidad.');
+  ins.push('Estados con mayor tasa de tardías: <b>'+tt.slice(0,6).map(function(x){return m.estados[x.e]}).join(', ')+'</b>.');
+  ins.push('<b>'+pct(100*a.tS/a.tN,2)+'</b> de los pedidos llegó tarde (unos '+fmt(a.tS)+').');
+  $('#ins-logistica').innerHTML=ins.map(function(x){return '<li>'+x+'</li>'}).join('');
+  var tb='<tr><th>Tramo</th><th>Pedidos</th><th>Nota</th></tr>';
+  g.forEach(function(i,k){tb+='<tr><td>'+m.grupos[k]+'</td><td>'+fmt(cnt[k])+'</td><td>'+fmt(sat[k],2)+'</td></tr>'});
+  $('#tb-tramo').innerHTML=tb;
+}
+
+function renderClientes(){
+  var seg=D.meta.seg,m=D.meta,tc=seg.reduce(function(s,x){return s+x.clientes},0),tv=seg.reduce(function(s,x){return s+x.monto},0);
+  $('#sub-clientes').textContent='Segmentación RFM sobre todo el período (sep. 2016 a ago. 2018).';
+  $('#kpis-clientes').innerHTML=kpi('Clientes únicos',fmt(tc),'')+kpi('Ventas totales',money(tv),'sin flete')+kpi('Clientes que repiten',pct(repiten(),1),'compraron 2 o más veces');
+  var sel=S.seg,tb='<tr><th>Segmento</th><th>Clientes</th><th>% clientes</th><th>Ventas ($)</th><th>% ventas</th><th>Gasto prom. ($)</th><th>Recencia (días)</th></tr>';
+  seg.forEach(function(x){tb+='<tr'+(x.segmento===sel?' class="hl"':'')+'><td class="name">'+esc(x.segmento)+'</td><td>'+fmt(x.clientes)+'</td><td>'+fmt(x.pc,1)+' %</td><td>'+fmt(x.monto)+'</td><td>'+fmt(x.pv,1)+' %</td><td>'+fmt(x.gasto)+'</td><td>'+fmt(x.rec,1)+'</td></tr>'});
+  tb+='<tr class="tot"><td>Total</td><td>'+fmt(tc)+'</td><td>100,0 %</td><td>'+fmt(tv)+'</td><td>100,0 %</td><td>'+fmt(tv/tc)+'</td><td>'+fmt(seg.reduce(function(s,x){return s+x.rec*x.clientes},0)/tc,1)+'</td></tr>';
+  $('#tb-seg').innerHTML=tb;
+  function colr(x){if(sel)return x.segmento===sel?css('--red'):css('--blue-soft');return x.segmento==='En riesgo de alto valor'?css('--red'):css('--blue')}
+  var bySeg=seg.slice();
+  mk('ch-segv',{type:'bar',data:{labels:bySeg.map(function(x){return x.segmento}),datasets:[{data:bySeg.map(function(x){return +x.pv.toFixed(1)}),backgroundColor:bySeg.map(colr),borderRadius:4,barPercentage:.7}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign(tipStyle(),{callbacks:{label:function(c){return pct(c.parsed.x,1)+' de las ventas'}}})},scales:axes(true,function(v){return v+' %'},{valmin:0})}});
+  var byC=seg.slice().sort(function(a,b){return b.clientes-a.clientes});
+  mk('ch-segc',{type:'bar',data:{labels:byC.map(function(x){return x.segmento}),datasets:[{data:byC.map(function(x){return x.clientes}),backgroundColor:byC.map(colr),borderRadius:4,barPercentage:.7}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false},tooltip:Object.assign(tipStyle(),{callbacks:{label:function(c){return fmt(c.parsed.x)+' clientes'}}})},scales:axes(true,function(v){return fmt(v)},{valmin:0})}});
+  var alto=seg.filter(function(x){return /alto valor/.test(x.segmento)}),ac=alto.reduce(function(s,x){return s+x.pc},0),av=alto.reduce(function(s,x){return s+x.pv},0);
+  var rk=seg.filter(function(x){return x.segmento==='En riesgo de alto valor'})[0],pd=seg.filter(function(x){return x.segmento==='Perdidos'})[0];
+  var ins=['Los dos segmentos de alto valor son el <b>'+fmt(ac,0)+' %</b> de los clientes y generan el <b>'+fmt(av,0)+' %</b> de las ventas.',
+    '<b>'+fmt(rk.clientes)+'</b> clientes «En riesgo de alto valor» llevan unos <b>'+fmt(rk.rec,0)+'</b> días sin comprar: primera oportunidad de reactivación.',
+    'Solo el <b>'+fmt(repiten(),0)+' %</b> de los clientes compró más de una vez.',
+    'Los clientes «Perdidos» son el '+fmt(pd.pc,0)+' % de la base, pero aportan solo el '+fmt(pd.pv,1)+' % de las ventas.'];
+  if(sel)ins.push('Segmento resaltado: <b>'+esc(sel)+'</b>.');
+  $('#ins-clientes').innerHTML=ins.map(function(x){return '<li>'+x+'</li>'}).join('');
+}
+
+function renderVerificacion(){
+  var a=agg(0,-1),m=D.meta,seg=m.seg,st=byState(0),rows=[],r2=function(x,d){return +x.toFixed(d)};
+  var tot=st.reduce(function(s,x){return s+x.v},0),top=st.slice().sort(function(x,y){return y.v-x.v}),sp=top[0];
+  var pk=0,pkI=0;for(var i=0;i<24;i++){if(a.mv[i]>pk){pk=a.mv[i];pkI=i}}
+  var alto=seg.filter(function(x){return /alto valor/.test(x.segmento)}),rk=seg.filter(function(x){return x.segmento==='En riesgo de alto valor'})[0];
+  var cs=catAgg(0,-1),O=OFICIAL;
+  function add(k,oficial,calc,d,fmtf){rows.push({k:k,o:oficial,c:calc,d:d,f:fmtf,ok:r2(oficial,d)===r2(calc,d)})}
+  add('Ventas totales (sin flete)',O.ventas,a.v,2,money2);
+  add('Pedidos entregados',O.pedidos,a.n,0,fmt);
+  add('Ticket promedio',O.ticket,a.v/a.n,2,money2);
+  add('Días de entrega (promedio)',O.dias,a.dS/a.dN,1,function(x){return fmt(x,1)});
+  add('Entregas tardías (%)',O.tard,100*a.tS/a.tN,2,function(x){return fmt(x,2)+' %'});
+  add('Satisfacción por pedido',O.sat,a.rS/a.rN,2,function(x){return fmt(x,2)});
+  add('Clientes únicos',O.clientes,a.cust,0,fmt);
+  add('Clientes que repiten (%)',O.repiten,repiten(),1,function(x){return fmt(x,1)+' %'});
+  add('Pedidos con reseña y fecha de entrega',O.conresena,a.conresena,0,fmt);
+  add('Participación de SP en ventas (%)',O.sp,100*sp.v/tot,0,function(x){return fmt(x,0)+' %'});
+  add('SP + RJ + MG en ventas (%)',O.top3,100*top.slice(0,3).reduce(function(s,x){return s+x.v},0)/tot,0,function(x){return fmt(x,0)+' %'});
+  add('Pico mensual de ventas (nov. 2017)',O.pico,pk,0,money);
+  add('Categoría líder en ventas (health_beauty)',O.topcat,cs[0].v,0,money);
+  m.grupos.forEach(function(gname,k){var g=k+1;add('Nota promedio · '+gname,O.tramos[k],a.gr[g]/a.grn[g],2,function(x){return fmt(x,2)})});
+  add('Clientes en segmentos de alto valor (%)',O.altoC,alto.reduce(function(s,x){return s+x.pc},0),0,function(x){return fmt(x,0)+' %'});
+  add('Ventas de segmentos de alto valor (%)',O.altoV,alto.reduce(function(s,x){return s+x.pv},0),0,function(x){return fmt(x,0)+' %'});
+  add('Clientes «En riesgo de alto valor»',O.riesgo,rk.clientes,0,fmt);
+  add('Recencia de «En riesgo de alto valor» (días)',O.riesgoRec,rk.rec,0,fmt);
+  var okN=rows.filter(function(r){return r.ok}).length;
+  $('#ver-sum').innerHTML='<div class="big">'+okN+' de '+rows.length+'</div><div>cifras coinciden con las oficiales</div><span class="pill '+(okN===rows.length?'ok':'bad')+'">'+(okN===rows.length?'TODO COINCIDE':'REVISAR')+'</span>';
+  var tb='<tr><th>Cifra</th><th>Oficial (README / PDF)</th><th>Recalculado (CSV)</th><th>Estado</th></tr>';
+  rows.forEach(function(r){tb+='<tr><td class="name">'+r.k+'</td><td>'+r.f(r.o)+'</td><td>'+r.f(r.c)+'</td><td><span class="pill '+(r.ok?'ok':'bad')+'">'+(r.ok?'OK':'REVISAR')+'</span></td></tr>'});
+  $('#tb-ver').innerHTML=tb;
+}
+
+/* ---------- control ---------- */
+var RENDER={resumen:renderResumen,productos:renderProductos,logistica:renderLogistica,clientes:renderClientes,verificacion:renderVerificacion};
+function render(){
+  if(!D)return;
+  setupChartDefaults();
+  ['resumen','productos','logistica','clientes','verificacion'].forEach(function(p){$('#p-'+p).hidden=(p!==S.page)});
+  document.querySelectorAll('nav.tabs button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.page===S.page?'true':'false')});
+  document.querySelectorAll('#filters .f').forEach(function(f){f.hidden=f.dataset.pages.split(' ').indexOf(S.page)<0});
+  document.querySelectorAll('#chips-year button').forEach(function(b){b.setAttribute('aria-checked',(+b.dataset.y===S.year)?'true':'false')});
+  $('#sel-estado').value=String(S.est);$('#sel-cat').value=String(S.cat);$('#sel-seg').value=S.seg;
+  RENDER[S.page]();
+}
+function setPage(p,push){S.page=p;if(push!==false){try{history.replaceState(null,'','#'+p)}catch(e){}}render();window.scrollTo(0,0)}
+function init(){
+  var m=D.meta,yc='';
+  [[0,'Todos'],[2016,'2016'],[2017,'2017'],[2018,'2018']].forEach(function(y){yc+='<button type="button" role="radio" data-y="'+y[0]+'" aria-checked="false">'+y[1]+'</button>'});
+  $('#chips-year').innerHTML=yc;
+  $('#sel-estado').innerHTML='<option value="-1">Todos</option>'+m.estados.map(function(e,i){return '<option value="'+i+'">'+e+'</option>'}).join('');
+  var ci=m.cats.map(function(c,i){return i}).sort(function(a,b){return m.catES[a].localeCompare(m.catES[b],'es')});
+  $('#sel-cat').innerHTML='<option value="-1">Todas</option>'+ci.map(function(i){return '<option value="'+i+'">'+esc(m.catES[i])+'</option>'}).join('');
+  $('#sel-seg').innerHTML='<option value="">Todos</option>'+m.seg.map(function(x){return '<option>'+esc(x.segmento)+'</option>'}).join('');
+  $('#chips-year').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.year=+b.dataset.y;render()});
+  $('#sel-estado').addEventListener('change',function(e){S.est=+e.target.value;render()});
+  $('#sel-cat').addEventListener('change',function(e){S.cat=+e.target.value;render()});
+  $('#sel-seg').addEventListener('change',function(e){S.seg=e.target.value;render()});
+  $('#reset').addEventListener('click',function(){S.year=0;S.est=-1;S.cat=-1;S.seg='';render()});
+  document.querySelector('nav.tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(b)setPage(b.dataset.page)});
+  window.addEventListener('hashchange',function(){var h=location.hash.slice(1);if(RENDER[h]&&h!==S.page){S.page=h;render()}});
+  var h=location.hash.slice(1);if(RENDER[h])S.page=h;
+  $('#loading').hidden=true;render();
+  var mq=window.matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',function(){render()});
+  new MutationObserver(function(){render()}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+}
+load().then(init).catch(function(err){$('#loading').textContent='No se pudieron cargar los datos: '+err.message});
+})();
+</script>
