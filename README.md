@@ -11,6 +11,7 @@ Proyecto de análisis de datos de punta a punta sobre el dataset público de Oli
 | Entregable | Qué es | Dónde |
 |---|---|---|
 | Dashboard Power BI | 4 páginas: Resumen, Productos, Logística y Clientes | Carpeta [`04_powerbi/`](04_powerbi/) |
+| Dashboard web interactivo | Filtros por año, estado, categoría y segmento RFM; incluye página de verificación | [Abrir panel](https://hansantoine1998-ops.github.io/olist-ecommerce-analysis/03_dashboard_web/) |
 | Reporte ejecutivo | PDF de 6 páginas para gerencia | Carpeta [`05_reporte/`](05_reporte/) |
 | Análisis en Python | Perfilado, retraso vs. satisfacción y RFM; generador del reporte PDF (Colab) | Carpeta [`02_python/`](02_python/) |
 | Excel de apoyo | Validación de cifras y tablas dinámicas (53 MB) | [Descargar desde Releases](https://github.com/hansantoine1998-ops/olist-ecommerce-analysis/releases/tag/v1.0) |
@@ -65,6 +66,7 @@ Pedidos entregados, calculados por pedido. Los valores monetarios están en real
 ```
 ├── 01_sql/                Scripts de MySQL (carga de datos, vistas y KPIs)
 ├── 02_python/             Análisis en Colab (RFM, retraso) y generador del reporte PDF
+├── 03_dashboard_web/    Panel interactivo (HTML), publicado con GitHub Pages
 ├── 04_powerbi/            Dashboard (.pbix)
 ├── 05_reporte/            Reporte ejecutivo para gerencia (PDF)
 ├── 06_datos_procesados/   CSV generados por el análisis y usados por Power BI
